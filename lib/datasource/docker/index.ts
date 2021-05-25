@@ -16,6 +16,7 @@ import {
   http,
   id,
 } from './common';
+import { ensurePathPrefix } from '../../util/url';
 
 // TODO: add got typings when available (#9646)
 // TODO: replace www-authenticate with https://www.npmjs.com/package/auth-header (#9645)
@@ -72,7 +73,8 @@ async function getTags(
     // AWS ECR limits the maximum number of results to 1000
     // See https://docs.aws.amazon.com/AmazonECR/latest/APIReference/API_DescribeRepositories.html#ECR-DescribeRepositories-request-maxResults
     const limit = ecrRegex.test(registry) ? 1000 : 10000;
-    let url = `${registry}/v2/${repository}/tags/list?n=${limit}`;
+    let url = `${registry}/${repository}/tags/list?n=${limit}`;
+    url = ensurePathPrefix(url, '/v2');
     const headers = await getAuthHeaders(registry, repository);
     if (!headers) {
       logger.debug('Failed to get authHeaders for getTags lookup');
