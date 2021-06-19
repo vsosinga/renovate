@@ -1,7 +1,7 @@
 import { Command } from 'commander';
-import { version } from '../../package.json';
-import { getOptions } from './definitions';
-import type { GlobalConfig, RenovateCliConfig, RenovateOptions } from './types';
+import { version } from '../../../../../package.json';
+import { getOptions } from '../../../../config/definitions';
+import type { AllConfig, RenovateOptions } from '../../../../config/types';
 
 export function getCliName(option: Partial<RenovateOptions>): string {
   if (option.cli === false) {
@@ -11,7 +11,7 @@ export function getCliName(option: Partial<RenovateOptions>): string {
   return `--${nameWithHyphens.toLowerCase()}`;
 }
 
-export function getConfig(input: string[]): GlobalConfig {
+export function getConfig(input: string[]): AllConfig {
   // massage migrated configuration keys
   const argv = input
     .map((a) =>
@@ -27,7 +27,7 @@ export function getConfig(input: string[]): GlobalConfig {
     .filter((a) => !a.startsWith('--git-fs'));
   const options = getOptions();
 
-  const config: RenovateCliConfig = {};
+  const config: Record<string, any> = {};
 
   const coersions: Record<string, (arg: string) => unknown> = {
     boolean: (val: string): boolean => {
@@ -88,7 +88,7 @@ export function getConfig(input: string[]): GlobalConfig {
     console.log('');
     console.log('    $ renovate --token abc123 singapore/lint-condo');
     console.log(
-      '    $ renovate --labels=renovate,dependency --ignore-unstable=false --log-level debug singapore/lint-condo'
+      '    $ LOG_LEVEL=debug renovate --labels=renovate,dependency --ignore-unstable=false singapore/lint-condo'
     );
     console.log('    $ renovate singapore/lint-condo singapore/package-test');
     console.log(

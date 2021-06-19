@@ -4,7 +4,10 @@ import { logger } from '../../logger';
 import { ExternalHostError } from '../../types/errors/external-host-error';
 import * as packageCache from '../../util/cache/package';
 import { ensurePathPrefix } from '../../util/url';
-import * as dockerVersioning from '../../versioning/docker';
+import {
+  api as dockerVersioning,
+  id as dockerVersioningId,
+} from '../../versioning/docker';
 import type { GetReleasesConfig, ReleaseResult } from '../types';
 import {
   defaultRegistryUrls,
@@ -25,7 +28,7 @@ import { getTagsQuayRegistry } from './quay';
 export { id };
 export const customRegistrySupport = true;
 export { defaultRegistryUrls };
-export const defaultVersioning = dockerVersioning.id;
+export const defaultVersioning = dockerVersioningId;
 export const registryStrategy = 'first';
 
 export const defaultConfig = {
@@ -144,6 +147,14 @@ async function getTags(
   }
 }
 
+function findLatestStable(tags: string[]): string {
+  const versions = tags
+    .filter((v) => dockerVersioning.isValid(v) && dockerVersioning.isStable(v))
+    .sort((a, b) => dockerVersioning.sortVersions(a, b));
+
+  return versions.pop() ?? tags.slice(-1).pop();
+}
+
 /**
  * docker.getDigest
  *
@@ -230,7 +241,7 @@ export async function getReleases({
     releases,
   };
 
-  const latestTag = tags.includes('latest') ? 'latest' : tags[tags.length - 1];
+  const latestTag = tags.includes('latest') ? 'latest' : findLatestStable(tags);
   const labels = await getLabels(registryHost, dockerRepository, latestTag);
   if (labels && 'org.opencontainers.image.source' in labels) {
     ret.sourceUrl = labels['org.opencontainers.image.source'];

@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import { getAdminConfig, setAdminConfig } from '../../config/admin';
 import type { RenovateConfig } from '../../config/types';
 import { logger, setMeta } from '../../logger';
+import { removeDanglingContainers } from '../../util/exec/docker';
 import { deleteLocalFile, privateCacheDir } from '../../util/fs';
 import * as queue from '../../util/http/queue';
 import { addSplit, getSplits, splitInit } from '../../util/split';
@@ -30,6 +31,7 @@ export async function renovateRepository(
 ): Promise<ProcessResult> {
   splitInit();
   let config = setAdminConfig(repoConfig);
+  await removeDanglingContainers();
   setMeta({ repository: config.repository });
   logger.info({ renovateVersion }, 'Repository started');
   logger.trace({ config });
@@ -46,6 +48,7 @@ export async function renovateRepository(
     );
     await ensureOnboardingPr(config, packageFiles, branches);
     const res = await updateRepo(config, branches);
+    setMeta({ repository: config.repository });
     addSplit('update');
     await setBranchCache(branches);
     if (res === 'automerged') {
