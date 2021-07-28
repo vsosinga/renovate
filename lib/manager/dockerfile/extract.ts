@@ -68,13 +68,22 @@ export function getDep(
       '{{depName}}{{#if newValue}}:{{newValue}}{{/if}}{{#if newDigest}}@{{newDigest}}{{/if}}';
   }
   dep.datasource = datasourceDocker.id;
+
+  // Pretty up special prefixes
+  if (dep.depName) {
+    const specialPrefixes = ['amd64', 'arm64', 'library'];
+    for (const prefix of specialPrefixes) {
+      if (dep.depName.startsWith(`${prefix}/`)) {
+        dep.lookupName = dep.depName;
+        dep.depName = dep.depName.replace(`${prefix}/`, '');
+      }
+    }
+  }
+
   if (dep.depName === 'ubuntu') {
     dep.versioning = ubuntuVersioning.id;
   }
-  if (dep.depName?.startsWith('library/')) {
-    dep.lookupName = dep.depName;
-    dep.depName = dep.depName.replace('library/', '');
-  }
+
   return dep;
 }
 
