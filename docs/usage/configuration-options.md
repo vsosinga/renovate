@@ -344,9 +344,10 @@ Configure this option to `false` if you prefer Renovate to open a new issue when
 
 Constraints are used in package managers which use third party tools to update "artifacts" like lock files or checksum files.
 Typically, the constraint is detected automatically by Renovate from files within the repository and there is no need to manually configure it.
+Manually specifying constraints is supported for `ruby`, `bundler`, `composer`, `go`, `npm`, `yarn`, `pnpm`, `python`, `pipenv`, and `poetry`.
 
 Constraints are also used to manually restrict which _datasource_ versions are possible to upgrade to based on their language support.
-For now this only supports `python`, other compatibility restrictions will be added in the future.
+For now this datasource constraint feature only supports `python`, other compatibility restrictions will be added in the future.
 
 ```json
 {
@@ -440,6 +441,11 @@ You can configure this to `true` if you prefer Renovate to close an existing Dep
 ## dependencyDashboardFooter
 
 ## dependencyDashboardHeader
+
+## dependencyDashboardLabels
+
+The labels only get updated when the Dependency Dashboard issue updates its content and/or title.
+It is pointless to edit the labels, as Renovate bot restores the labels on each run.
 
 ## dependencyDashboardTitle
 
@@ -676,6 +682,7 @@ Example:
 
 ## gitLabAutomerge
 
+If you enabled `automerge` in the Renovate config, you can speed up the automerge process by using GitLab's own automerge function.
 Caution (fixed in GitLab >= 12.7): when this option is enabled it is possible due to a bug in GitLab that MRs with failing pipelines might still get merged.
 This is caused by a race condition in GitLab's Merge Request API - [read the corresponding issue](https://gitlab.com/gitlab-org/gitlab/issues/26293) for details.
 
