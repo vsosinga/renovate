@@ -71,6 +71,10 @@ export function getDep(
   if (dep.depName === 'ubuntu') {
     dep.versioning = ubuntuVersioning.id;
   }
+  if (dep.depName?.startsWith('library/')) {
+    dep.lookupName = dep.depName;
+    dep.depName = dep.depName.replace('library/', '');
+  }
   return dep;
 }
 
