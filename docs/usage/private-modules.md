@@ -142,8 +142,21 @@ See [private npm modules](./private-npm-modules.md) for more details.
 
 ### nuget
 
-For each known NuGet registry, Renovate searches for `hostRules` with `hostType=nuget` and matching host.
-For those found, a command similar to the following is run: `dotnet nuget add source ${registryInfo.feedUrl} --configfile ${nugetConfigFile} --username ${username} --password ${password} --store-password-in-clear-text`
+For each known NuGet registry, Renovate searches for `hostRules` with `hostType=nuget` and fully matched `url` property (and not the default `matchHost` behavior). The only supported credential type is `username` + `password`. For those found, a command similar to the following is run: `dotnet nuget add source ${registryInfo.feedUrl} --configfile ${nugetConfigFile} --username ${username} --password ${password} --store-password-in-clear-text`
+
+Example:
+```
+{
+  "hostRules": [
+    {
+      "hostType": "nuget",
+      "url": "https://registry.company.com/packages/feed.json",
+      "username": "abc123"
+      "password": "xyz789"
+    }
+  ]
+}
+```
 
 ### poetry
 
