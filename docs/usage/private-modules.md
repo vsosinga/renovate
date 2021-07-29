@@ -151,7 +151,7 @@ Example:
     {
       "hostType": "nuget",
       "url": "https://registry.company.com/packages/feed.json",
-      "username": "abc123"
+      "username": "abc123",
       "password": "xyz789"
     }
   ]
